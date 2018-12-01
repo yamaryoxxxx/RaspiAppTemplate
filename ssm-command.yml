@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+
+  InstallTemplateApp:
+    Type: AWS::SSM::Document
+    Properties:
+      DocumentType: Command
+      Content:
+        schemaVersion: "1.2"
+        runtimeConfig:
+          aws:runShellScript:
+            properties:
+              - runCommand:
+                  - 
+                  - apt-get update
+                  - apt-get -y upgrade

@@ -1,0 +1,10 @@
+[Unit]
+Description = template app
+
+[Service]
+ExecStart = /TemplateApp/app/index.sh
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target
