@@ -2,16 +2,32 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Resources:
 
-  InstallTemplateApp:
+  InstallApp:
     Type: AWS::SSM::Document
     Properties:
       DocumentType: Command
       Content:
         schemaVersion: "1.2"
+        parameters:
+          appName:
+            type: String
+          appRepo:
+            type: String
+          buildCommand:
+            type: String
+            default: ""
         runtimeConfig:
           aws:runShellScript:
             properties:
               - runCommand:
-                  - 
-                  - apt-get update
-                  - apt-get -y upgrade
+                  - mkdir -p /apps
+                  - rm -rf /tmp/{{ appName }}
+                  - rm -rf /tmp/{{ appName }}.old
+                  - git clone {{ appRepo }} /tmp/{{ appName }}
+                  - mv /apps/{{ appName }} /tmp/{{ appName }}.back
+                  - mv /tmp/{{ appName }} /apps/{{ appName }}
+                  - cd /apps/{{ appName }}
+                  - {{ buildCommand }}
+                  - cp /apps/{{ appName }}/app.service /etc/systemd/system/{{ appName }}.service
+                  - systemctl enable {{ appName }}
+                  - systemctl start {{ appName }}
